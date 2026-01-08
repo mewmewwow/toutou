@@ -1,0 +1,192 @@
+{
+  "title": "间隔重复算法实现",
+  "create_time": 1737423706.676001,
+  "update_time": 1737423723.661967,
+  "mapping": {
+    "aaa11178-42f7-4fc0-8ba0-0b61a6d5a032": {
+      "id": "aaa11178-42f7-4fc0-8ba0-0b61a6d5a032",
+      "message": null,
+      "parent": null,
+      "children": [
+        "83c0cffb-21f8-4870-94df-4b730fd5fd55"
+      ]
+    },
+    "83c0cffb-21f8-4870-94df-4b730fd5fd55": {
+      "id": "83c0cffb-21f8-4870-94df-4b730fd5fd55",
+      "message": {
+        "id": "83c0cffb-21f8-4870-94df-4b730fd5fd55",
+        "author": {
+          "role": "system",
+          "name": null,
+          "metadata": {}
+        },
+        "create_time": null,
+        "update_time": null,
+        "content": {
+          "content_type": "text",
+          "parts": [
+            ""
+          ]
+        },
+        "status": "finished_successfully",
+        "end_turn": true,
+        "weight": 0,
+        "metadata": {
+          "is_visually_hidden_from_conversation": true
+        },
+        "recipient": "all",
+        "channel": null
+      },
+      "parent": "aaa11178-42f7-4fc0-8ba0-0b61a6d5a032",
+      "children": [
+        "aaa23343-9875-40f5-abb7-9b8c97220492"
+      ]
+    },
+    "aaa23343-9875-40f5-abb7-9b8c97220492": {
+      "id": "aaa23343-9875-40f5-abb7-9b8c97220492",
+      "message": {
+        "id": "aaa23343-9875-40f5-abb7-9b8c97220492",
+        "author": {
+          "role": "user",
+          "name": null,
+          "metadata": {}
+        },
+        "create_time": 1737423706.679587,
+        "update_time": null,
+        "content": {
+          "content_type": "text",
+          "parts": [
+            "间隔重复算法的实现"
+          ]
+        },
+        "status": "finished_successfully",
+        "end_turn": null,
+        "weight": 1,
+        "metadata": {
+          "serialization_metadata": {
+            "custom_symbol_offsets": []
+          },
+          "dictation": false,
+          "request_id": "90539a9459918193-SIN",
+          "message_source": null,
+          "timestamp_": "absolute",
+          "message_type": null
+        },
+        "recipient": "all",
+        "channel": null
+      },
+      "parent": "83c0cffb-21f8-4870-94df-4b730fd5fd55",
+      "children": [
+        "bb7a0f72-2006-47cd-9d70-3d37d0d8e27d"
+      ]
+    },
+    "bb7a0f72-2006-47cd-9d70-3d37d0d8e27d": {
+      "id": "bb7a0f72-2006-47cd-9d70-3d37d0d8e27d",
+      "message": {
+        "id": "bb7a0f72-2006-47cd-9d70-3d37d0d8e27d",
+        "author": {
+          "role": "assistant",
+          "name": null,
+          "metadata": {}
+        },
+        "create_time": 1737423722.63842,
+        "update_time": null,
+        "content": {
+          "content_type": "model_editable_context",
+          "model_set_context": "",
+          "repository": null,
+          "repo_summary": null,
+          "structured_context": null
+        },
+        "status": "finished_successfully",
+        "end_turn": null,
+        "weight": 1,
+        "metadata": {
+          "message_type": null,
+          "model_slug": "gpt-4o",
+          "default_model_slug": "auto",
+          "parent_id": "aaa23343-9875-40f5-abb7-9b8c97220492",
+          "request_id": "90539a9459918193-SIN",
+          "timestamp_": "absolute",
+          "model_switcher_deny": []
+        },
+        "recipient": "all",
+        "channel": null
+      },
+      "parent": "aaa23343-9875-40f5-abb7-9b8c97220492",
+      "children": [
+        "ef826290-711e-4450-b65e-e905792e5528"
+      ]
+    },
+    "ef826290-711e-4450-b65e-e905792e5528": {
+      "id": "ef826290-711e-4450-b65e-e905792e5528",
+      "message": {
+        "id": "ef826290-711e-4450-b65e-e905792e5528",
+        "author": {
+          "role": "assistant",
+          "name": null,
+          "metadata": {}
+        },
+        "create_time": 1737423722.638616,
+        "update_time": null,
+        "content": {
+          "content_type": "text",
+          "parts": [
+            "实现间隔重复算法（Spaced Repetition Algorithm，SRA）的目标是优化记忆，通过逐步增加复习的时间间隔巩固长期记忆。下面是一个经典的实现思路和代码示例，基于流行的 **SuperMemo 2 (SM-2)** 算法。\n\n### 核心思路\n1. **难度评级**：用户在每次复习后对卡片的记忆状态进行评级（通常为0到5的分数）。\n2. **复习间隔更新**：\n   - 如果记忆评分高，则延长下次复习的间隔时间。\n   - 如果记忆评分低，则缩短间隔时间或立即复习。\n3. **算法公式**：\n   - 初始间隔为1天，第二次间隔为6天。\n   - 每次复习后，根据评分调整记忆因子（EF, E-Factor），并更新间隔时间。\n   - EF 的调整公式：  \n     \\[\n     EF_{\\text{new}} = EF_{\\text{old}} + (0.1 - (5 - \\text{grade}) \\times (0.08 + (5 - \\text{grade}) \\times 0.02))\n     \\]\n     （EF 最低为 1.3）\n   - 下次复习间隔：\n     \\[\n     I_{\\text{next}} = I_{\\text{current}} \\times EF\n     \\]\n\n---\n\n### Python 实现\n\n```python\nclass Card:\n    def __init__(self, question, answer):\n        self.question = question\n        self.answer = answer\n        self.ef = 2.5  # 初始记忆因子\n        self.interval = 1  # 初始间隔（天）\n        self.repetitions = 0  # 已复习次数\n        self.next_review = 0  # 下一次复习时间（相对天数）\n\n    def update(self, grade):\n        \"\"\"\n        根据用户评分更新卡片状态\n        :param grade: 用户对记忆状态的评分 (0-5)\n        \"\"\"\n        if grade < 3:\n            # 如果评分低于3，则重置复习次数和间隔\n            self.repetitions = 0\n            self.interval = 1\n        else:\n            if self.repetitions == 0:\n                self.interval = 1\n            elif self.repetitions == 1:\n                self.interval = 6\n            else:\n                self.interval *= self.ef  # 按记忆因子调整间隔\n\n            self.repetitions += 1\n\n        # 更新记忆因子 EF\n        self.ef += 0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02)\n        self.ef = max(1.3, self.ef)  # EF 最低为 1.3\n\n        # 计算下一次复习时间\n        self.next_review += int(self.interval)\n\n# 示例使用\nfrom datetime import datetime, timedelta\n\n# 创建卡片\ncard = Card(\"What is the capital of France?\", \"Paris\")\n\n# 模拟复习过程\ntoday = 0\nfor day in range(1, 31):  # 模拟一个月\n    if day == card.next_review:\n        print(f\"Day {day}: Reviewing card.\")\n        grade = int(input(f\"Rate your recall (0-5) for '{card.question}': \"))\n        card.update(grade)\n        print(f\"Next review scheduled in {card.interval} days (Day {card.next_review}).\")\n```\n\n---\n\n### 功能解读\n1. **记忆难度调整**：\n   - 用户输入的评分直接影响间隔时间。\n   - 难记的卡片复习更频繁。\n2. **动态调整因子**：\n   - 记忆因子 `EF` 自适应调整，体现用户对单词熟悉程度。\n3. **复习计划自动化**：\n   - 根据复习间隔自动安排复习时间。\n\n---\n\n### 可扩展功能\n1. **多卡片管理**：实现对多张卡片的批量管理（如列表或数据库）。\n2. **时间戳支持**：将 `next_review` 转换为实际日期，结合日期管理更直观。\n3. **界面优化**：结合前端框架（如 React 或 HTML/CSS）设计用户友好的复习工具。\n\n你可以基于这个框架扩展适合自己的工具。需要更高级的实现或其他改进吗？"
+          ]
+        },
+        "status": "finished_successfully",
+        "end_turn": true,
+        "weight": 1,
+        "metadata": {
+          "finish_details": {
+            "type": "stop",
+            "stop_tokens": [
+              200002
+            ]
+          },
+          "is_complete": true,
+          "citations": [],
+          "content_references": [],
+          "message_type": null,
+          "model_slug": "gpt-4o",
+          "default_model_slug": "auto",
+          "parent_id": "bb7a0f72-2006-47cd-9d70-3d37d0d8e27d",
+          "request_id": "90539a9459918193-SIN",
+          "timestamp_": "absolute",
+          "model_switcher_deny": []
+        },
+        "recipient": "all",
+        "channel": null
+      },
+      "parent": "bb7a0f72-2006-47cd-9d70-3d37d0d8e27d",
+      "children": []
+    }
+  },
+  "moderation_results": [],
+  "current_node": "ef826290-711e-4450-b65e-e905792e5528",
+  "plugin_ids": null,
+  "conversation_id": "678efb5a-6e24-8011-999d-59403c784083",
+  "conversation_template_id": null,
+  "gizmo_id": null,
+  "gizmo_type": null,
+  "is_archived": false,
+  "is_starred": null,
+  "safe_urls": [],
+  "blocked_urls": [],
+  "default_model_slug": "auto",
+  "conversation_origin": null,
+  "is_read_only": null,
+  "voice": null,
+  "async_status": null,
+  "disabled_tool_ids": [],
+  "is_do_not_remember": null,
+  "memory_scope": "global_enabled",
+  "context_scopes": null,
+  "sugar_item_id": null,
+  "sugar_item_visible": false,
+  "pinned_time": null,
+  "is_study_mode": false,
+  "owner": null,
+  "__fetched_at": "2025-12-30T02:55:09.240Z"
+}

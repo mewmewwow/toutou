@@ -85,10 +85,21 @@
 ### Functional Requirements
 
 - **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
+- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]
 - **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
+
+### Performance Requirements (Constitution V)
+
+*Per Constitution: API endpoints p95 < 500ms, p99 < 1000ms; Frontend FCP < 2s, TTI < 3s*
+
+- **PERF-001**: [Endpoint/Feature] MUST respond within [X]ms at p95 (default: 500ms if API)
+- **PERF-002**: [Page/Screen] MUST achieve First Contentful Paint within [X]s (default: 2s if frontend)
+- **PERF-003**: [Database operation] MUST complete within [X]ms (default: 100ms for hot paths)
+- **PERF-004**: [Concurrent load] MUST handle [N] requests/second without degradation
+
+*If no specific performance requirement, specify "N/A - not user-facing"*
 
 *Example of marking unclear requirements:*
 

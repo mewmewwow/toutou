@@ -1,0 +1,1309 @@
+openapi: 3.0.3
+info:
+  title: 词善佳 (CiShanJia) API
+  description: Intelligent English Vocabulary Learning System API
+  version: 1.0.0
+servers:
+  - url: /api/v1
+
+tags:
+  - name: Auth
+    description: Authentication and registration
+  - name: Users
+    description: User management and profile
+  - name: Books
+    description: Vocabulary books and content
+  - name: Learning
+    description: Learning sessions and modules
+  - name: Review
+    description: FSRS review system
+  - name: Tests
+    description: Testing and challenges
+  - name: Rewards
+    description: Coins, medals, certificates
+
+paths:
+  # ============ AUTH ============
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/EmailRegister'
+                - $ref: '#/components/schemas/PhoneRegister'
+      responses:
+        '201':
+          description: Registration successful, 14-day trial started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login with email/phone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/oauth/{provider}:
+    get:
+      tags: [Auth]
+      summary: Initiate OAuth flow
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [google, wechat]
+      responses:
+        '302':
+          description: Redirect to OAuth provider
+
+  /auth/oauth/{provider}/callback:
+    get:
+      tags: [Auth]
+      summary: OAuth callback
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [google, wechat]
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OAuth successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/sms/send:
+    post:
+      tags: [Auth]
+      summary: Send SMS verification code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              properties:
+                phone:
+                  type: string
+                  example: "+8613800138000"
+      responses:
+        '200':
+          description: SMS sent
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/guest/migrate:
+    post:
+      tags: [Auth]
+      summary: Migrate guest data to registered user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deviceFingerprint]
+              properties:
+                deviceFingerprint:
+                  type: string
+      responses:
+        '200':
+          description: Guest data migrated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cardsImported:
+                    type: integer
+                  revlogsImported:
+                    type: integer
+
+  # ============ USERS ============
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    patch:
+      tags: [Users]
+      summary: Update user profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/me/devices:
+    get:
+      tags: [Users]
+      summary: List user devices
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Device list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+
+  # ============ BOOKS ============
+  /books:
+    get:
+      tags: [Books]
+      summary: List vocabulary books
+      parameters:
+        - name: isFree
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Book list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+
+  /books/{bookId}:
+    get:
+      tags: [Books]
+      summary: Get book details with units
+      parameters:
+        - $ref: '#/components/parameters/BookId'
+      responses:
+        '200':
+          description: Book details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDetail'
+
+  /books/{bookId}/units/{unitNumber}/words:
+    get:
+      tags: [Books]
+      summary: Get words in unit
+      parameters:
+        - $ref: '#/components/parameters/BookId'
+        - $ref: '#/components/parameters/UnitNumber'
+      responses:
+        '200':
+          description: Word list with sentences
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Word'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  # ============ LEARNING ============
+  /learning/sessions:
+    post:
+      tags: [Learning]
+      summary: Start or resume learning session
+      security:
+        - bearerAuth: []
+        - guestAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bookId, unitNumber, moduleType]
+              properties:
+                bookId:
+                  type: string
+                  format: uuid
+                unitNumber:
+                  type: integer
+                moduleType:
+                  type: integer
+                  minimum: 1
+                  maximum: 13
+      responses:
+        '200':
+          description: Session started/resumed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningSession'
+        '409':
+          description: Review blocking - must complete reviews first
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewBlockingError'
+
+  /learning/sessions/{sessionId}/next:
+    get:
+      tags: [Learning]
+      summary: Get next batch of words (10 words)
+      security:
+        - bearerAuth: []
+        - guestAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Next batch of words
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  words:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LearningWord'
+                  isReinforcement:
+                    type: boolean
+                  progress:
+                    $ref: '#/components/schemas/SessionProgress'
+
+  /learning/sessions/{sessionId}/submit:
+    post:
+      tags: [Learning]
+      summary: Submit learning result for single word
+      security:
+        - bearerAuth: []
+        - guestAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LearningSubmission'
+      responses:
+        '200':
+          description: Submission recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningResult'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ============ REVIEW ============
+  /review/due:
+    get:
+      tags: [Review]
+      summary: Get due review summary
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bookId
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Due review counts by module
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewSummary'
+
+  /review/cards:
+    get:
+      tags: [Review]
+      summary: Get due cards for review
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: moduleType
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Cards due for review
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewCard'
+
+  /review/cards/{cardId}:
+    post:
+      tags: [Review]
+      summary: Submit review result
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewSubmission'
+      responses:
+        '200':
+          description: Review recorded, next due date
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewResult'
+
+  /review/tracking:
+    get:
+      tags: [Review]
+      summary: Get memory tracking data for visualization
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bookId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [wordcloud, list, calendar]
+            default: wordcloud
+      responses:
+        '200':
+          description: Tracking data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingData'
+
+  # ============ TESTS ============
+  /tests/start:
+    post:
+      tags: [Tests]
+      summary: Start a test
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bookId, unitNumber, moduleType, testMode]
+              properties:
+                bookId:
+                  type: string
+                  format: uuid
+                unitNumber:
+                  type: integer
+                moduleType:
+                  type: integer
+                testMode:
+                  type: string
+                  enum: [normal, speed, ultimate]
+      responses:
+        '200':
+          description: Test started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestSession'
+        '409':
+          description: Review blocking - must complete reviews first
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewBlockingError'
+
+  /tests/{testId}/submit:
+    post:
+      tags: [Tests]
+      summary: Submit test answers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers]
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      questionId:
+                        type: string
+                      answer:
+                        type: string
+                      timeMs:
+                        type: integer
+      responses:
+        '200':
+          description: Test result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestResult'
+
+  # ============ REWARDS ============
+  /rewards/coins:
+    get:
+      tags: [Rewards]
+      summary: Get coin balance and today's earnings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Coin info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinInfo'
+
+  /rewards/coins/history:
+    get:
+      tags: [Rewards]
+      summary: Get coin transaction history
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Transaction history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinHistory'
+
+  /rewards/medals:
+    get:
+      tags: [Rewards]
+      summary: Get weekly medal progress
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Medal info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedalInfo'
+
+  /rewards/certificates:
+    get:
+      tags: [Rewards]
+      summary: Get earned certificates
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Certificate list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificate'
+
+  /rewards/login-streak:
+    get:
+      tags: [Rewards]
+      summary: Get login streak rewards status
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Login streak info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginStreak'
+
+    post:
+      tags: [Rewards]
+      summary: Claim login streak reward
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [milestone]
+              properties:
+                milestone:
+                  type: integer
+                  enum: [2, 5, 10, 17, 26, 30]
+      responses:
+        '200':
+          description: Reward claimed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinTransaction'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    guestAuth:
+      type: apiKey
+      in: header
+      name: X-Device-Fingerprint
+
+  parameters:
+    BookId:
+      name: bookId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    UnitNumber:
+      name: unitNumber
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+
+  responses:
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnauthorizedError:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: Access denied (membership required)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ConflictError:
+      description: Resource conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimitError:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+    EmailRegister:
+      type: object
+      required: [email, password, username]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        username:
+          type: string
+          minLength: 2
+          maxLength: 50
+        deviceFingerprint:
+          type: string
+
+    PhoneRegister:
+      type: object
+      required: [phone, verificationCode, username]
+      properties:
+        phone:
+          type: string
+        verificationCode:
+          type: string
+          pattern: '^\d{6}$'
+        username:
+          type: string
+        deviceFingerprint:
+          type: string
+
+    LoginRequest:
+      type: object
+      required: [credential, password]
+      properties:
+        credential:
+          type: string
+          description: Email or phone number
+        password:
+          type: string
+        deviceFingerprint:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        phone:
+          type: string
+        username:
+          type: string
+        avatar:
+          type: string
+        totalCoins:
+          type: integer
+        totalCredits:
+          type: integer
+        level:
+          type: integer
+        memberType:
+          type: string
+          enum: [guest, free, trial, paid]
+        memberExpireAt:
+          type: string
+          format: date-time
+        trialDaysRemaining:
+          type: integer
+        pronunciationPref:
+          type: string
+          enum: [us, uk]
+
+    UserUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+        avatar:
+          type: string
+        birthday:
+          type: string
+          format: date
+        pronunciationPref:
+          type: string
+          enum: [us, uk]
+
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        deviceName:
+          type: string
+        lastActiveAt:
+          type: string
+          format: date-time
+        isCurrent:
+          type: boolean
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        code:
+          type: string
+        description:
+          type: string
+        totalWords:
+          type: integer
+        totalUnits:
+          type: integer
+        isFree:
+          type: boolean
+        coverImage:
+          type: string
+
+    BookDetail:
+      allOf:
+        - $ref: '#/components/schemas/Book'
+        - type: object
+          properties:
+            units:
+              type: array
+              items:
+                type: object
+                properties:
+                  number:
+                    type: integer
+                  wordCount:
+                    type: integer
+                  isAccessible:
+                    type: boolean
+
+    Word:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        word:
+          type: string
+        phoneticUs:
+          type: string
+        phoneticUk:
+          type: string
+        audioUs:
+          type: string
+        audioUk:
+          type: string
+        definitions:
+          type: array
+          items:
+            type: object
+            properties:
+              pos:
+                type: string
+              meaning:
+                type: string
+        sentences:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sentence'
+
+    Sentence:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        contentEn:
+          type: string
+        contentCn:
+          type: string
+        isPrimary:
+          type: boolean
+        audioUrl:
+          type: string
+
+    LearningSession:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        unitNumber:
+          type: integer
+        moduleType:
+          type: integer
+        status:
+          type: string
+          enum: [active, paused, completed]
+        wordsCompleted:
+          type: integer
+        wordsTotal:
+          type: integer
+        effectiveSeconds:
+          type: integer
+
+    LearningWord:
+      allOf:
+        - $ref: '#/components/schemas/Word'
+        - type: object
+          properties:
+            cardStatus:
+              type: string
+              enum: [new, learning, review, graduated]
+
+    SessionProgress:
+      type: object
+      properties:
+        completed:
+          type: integer
+        total:
+          type: integer
+        batchNumber:
+          type: integer
+
+    LearningSubmission:
+      type: object
+      required: [wordId, rating, responseTimeMs]
+      properties:
+        wordId:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          minimum: 0
+          maximum: 4
+        responseTimeMs:
+          type: integer
+        userAnswer:
+          type: string
+        isCorrect:
+          type: boolean
+
+    LearningResult:
+      type: object
+      properties:
+        cardId:
+          type: string
+          format: uuid
+        newStatus:
+          type: string
+          enum: [new, learning, review, graduated]
+        stability:
+          type: number
+        difficulty:
+          type: number
+        nextDue:
+          type: string
+          format: date-time
+        coinsEarned:
+          type: integer
+
+    ReviewSummary:
+      type: object
+      properties:
+        totalDue:
+          type: integer
+        totalOverdue:
+          type: integer
+        isBlocking:
+          type: boolean
+        byModule:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              due:
+                type: integer
+              overdue:
+                type: integer
+
+    ReviewCard:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        wordId:
+          type: string
+          format: uuid
+        moduleType:
+          type: integer
+        word:
+          $ref: '#/components/schemas/Word'
+        stability:
+          type: number
+        difficulty:
+          type: number
+        retrievability:
+          type: number
+        dueAt:
+          type: string
+          format: date-time
+        reviewCount:
+          type: integer
+        errorCount:
+          type: integer
+
+    ReviewSubmission:
+      type: object
+      required: [rating, responseTimeMs]
+      properties:
+        rating:
+          type: integer
+          minimum: 0
+          maximum: 4
+        responseTimeMs:
+          type: integer
+        userAnswer:
+          type: string
+        isCorrect:
+          type: boolean
+
+    ReviewResult:
+      type: object
+      properties:
+        cardId:
+          type: string
+          format: uuid
+        newStability:
+          type: number
+        newDifficulty:
+          type: number
+        nextDue:
+          type: string
+          format: date-time
+        intervalDays:
+          type: number
+
+    TrackingData:
+      type: object
+      properties:
+        cards:
+          type: array
+          items:
+            type: object
+            properties:
+              word:
+                type: string
+              stability:
+                type: number
+              retrievability:
+                type: number
+              dueAt:
+                type: string
+                format: date-time
+              reviewCount:
+                type: integer
+              errorCount:
+                type: integer
+              urgencyLevel:
+                type: string
+                enum: [overdue, due_today, due_soon, stable]
+
+    ReviewBlockingError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: REVIEW_BLOCKING
+        message:
+          type: string
+        overdueCount:
+          type: integer
+        threshold:
+          type: integer
+          example: 25
+
+    TestSession:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        unitNumber:
+          type: integer
+        moduleType:
+          type: integer
+        testMode:
+          type: string
+          enum: [normal, speed, ultimate]
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestQuestion'
+        totalTimeMs:
+          type: integer
+        perQuestionTimeMs:
+          type: integer
+
+    TestQuestion:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [en_to_cn, cn_to_en, dictation, writing]
+        prompt:
+          type: string
+        audioUrl:
+          type: string
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              text:
+                type: string
+
+    TestResult:
+      type: object
+      properties:
+        score:
+          type: integer
+        totalQuestions:
+          type: integer
+        correctAnswers:
+          type: integer
+        passed:
+          type: boolean
+        starsEarned:
+          type: integer
+        coinsEarned:
+          type: integer
+        isNewHighScore:
+          type: boolean
+
+    CoinInfo:
+      type: object
+      properties:
+        balance:
+          type: integer
+        todayEarned:
+          type: integer
+        todayLearningEarned:
+          type: integer
+        dailyLearningCap:
+          type: integer
+          example: 500
+
+    CoinHistory:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoinTransaction'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    CoinTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+        balanceAfter:
+          type: integer
+        type:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    MedalInfo:
+      type: object
+      properties:
+        currentWeekCoins:
+          type: integer
+        currentMedal:
+          type: string
+        nextMedal:
+          type: string
+        coinsToNextMedal:
+          type: integer
+        weekStartDate:
+          type: string
+          format: date
+        weekEndDate:
+          type: string
+          format: date
+
+    Certificate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        bookId:
+          type: string
+          format: uuid
+        bookName:
+          type: string
+        type:
+          type: string
+          enum: [word_recognition, word_dictation, word_writing, sentence, all_round]
+        score:
+          type: integer
+        earnedAt:
+          type: string
+          format: date-time
+
+    LoginStreak:
+      type: object
+      properties:
+        currentMonthDays:
+          type: integer
+        loginDates:
+          type: array
+          items:
+            type: string
+            format: date
+        claimedMilestones:
+          type: array
+          items:
+            type: integer
+        availableMilestones:
+          type: array
+          items:
+            type: integer
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer

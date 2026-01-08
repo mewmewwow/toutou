@@ -31,7 +31,15 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+| Principle | Gate Question | Status | Notes |
+|-----------|---------------|--------|-------|
+| Code Style | Are linting/formatting tools specified in Technical Context? | [ ] | Tools: ___ |
+| Testing | Are all critical paths (auth, payment, data mutation) identified? | [ ] | Critical paths: ___ |
+| Simplicity | Is each abstraction justified with rejected simpler alternative? | [ ] | Fill Complexity Tracking if NO |
+| Error Handling | Are error contracts defined for all public interfaces? | [ ] | contracts/ status: ___ |
+| Performance | Are performance goals documented (API <500ms p95, FCP <2s)? | [ ] | Goals: ___ |
+
+**ERROR if**: Critical paths lack test coverage OR abstractions lack justification OR performance goals undefined for user-facing features.
 
 ## Project Structure
 
