@@ -72,7 +72,7 @@ export class GuestCleanupJob {
       // Delete associated data (in reverse dependency order)
       const transactionsDeleted = await this.deleteTransactions(guestIds);
       const attemptsDeleted = await this.deleteTestAttempts(guestIds);
-      const sessionsDeleted = await this.deleteLearninSessions(guestIds);
+      const sessionsDeleted = await this.deleteLearningSessions(guestIds);
       const cardsDeleted = await this.deleteCards(guestIds);
 
       // Finally, delete the guest users
@@ -99,11 +99,6 @@ export class GuestCleanupJob {
    * Delete coin transactions for guest users
    */
   private async deleteTransactions(userIds: string[]): Promise<number> {
-    const result = await this.transactionRepository.delete({
-      userId: LessThan(userIds.length) ? userIds : undefined,
-    });
-
-    // More efficient batch delete
     const deleteResult = await this.transactionRepository
       .createQueryBuilder()
       .delete()
@@ -129,7 +124,7 @@ export class GuestCleanupJob {
   /**
    * Delete learning sessions for guest users
    */
-  private async deleteLearninSessions(userIds: string[]): Promise<number> {
+  private async deleteLearningSessions(userIds: string[]): Promise<number> {
     const deleteResult = await this.sessionRepository
       .createQueryBuilder()
       .delete()
