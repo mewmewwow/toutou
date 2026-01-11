@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Card } from '../fsrs/entities/card.entity';
 import { Revlog } from '../fsrs/entities/revlog.entity';
@@ -10,12 +10,14 @@ import { TrackingService } from './tracking.service';
 import { ReviewBlockingGuard } from './guards/review-blocking.guard';
 import { FsrsModule } from '../fsrs/fsrs.module';
 import { DevicesModule } from '../devices/devices.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Card, Revlog, Word]),
     FsrsModule,
     DevicesModule,
+    forwardRef(() => AuthModule),
   ],
   controllers: [ReviewController],
   providers: [

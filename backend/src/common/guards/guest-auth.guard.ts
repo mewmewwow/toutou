@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { DevicesService } from '../../modules/devices/devices.service';
 
 /**
@@ -16,7 +17,10 @@ import { DevicesService } from '../../modules/devices/devices.service';
  */
 @Injectable()
 export class GuestAuthGuard implements CanActivate {
-  constructor(private readonly devicesService: DevicesService) {}
+  constructor(
+    private readonly devicesService: DevicesService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -24,20 +28,22 @@ export class GuestAuthGuard implements CanActivate {
     // Check for Bearer token first (authenticated user)
     const authHeader = request.headers['authorization'];
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      // For now, just validate token format
-      // Full JWT validation will be implemented in auth module
       const token = authHeader.substring(7);
       if (token) {
-        // Extract user from token (placeholder until JWT is fully implemented)
-        // In production, this would verify JWT and get user ID
-        if (token.startsWith('mock-jwt-for-')) {
-          const userId = token.replace('mock-jwt-for-', '');
-          request.user = { id: userId, isGuest: false };
+        try {
+          // 验证 JWT token 并提取用户信息
+          const payload = this.jwtService.verify(token);
+          request.user = {
+            id: payload.sub,
+            email: payload.email,
+            phone: payload.phone,
+            memberType: payload.memberType,
+            isGuest: false,
+          };
           return true;
+        } catch {
+          // JWT 验证失败，尝试使用设备指纹
         }
-        // Real JWT validation will be added later
-        request.user = { isGuest: false };
-        return true;
       }
     }
 

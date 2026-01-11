@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LearningSession } from './entities/learning-session.entity';
 import { LearningSessionService } from './learning-session.service';
@@ -10,6 +10,7 @@ import { SentenceValidationService } from './sentence-validation.service';
 import { DevicesModule } from '../devices/devices.module';
 import { BooksModule } from '../books/books.module';
 import { FsrsModule } from '../fsrs/fsrs.module';
+import { AuthModule } from '../auth/auth.module';
 import { User } from '../users/entities/user.entity';
 
 @Module({
@@ -18,6 +19,7 @@ import { User } from '../users/entities/user.entity';
     DevicesModule,
     BooksModule,
     FsrsModule,
+    forwardRef(() => AuthModule),
   ],
   controllers: [LearningController],
   providers: [
