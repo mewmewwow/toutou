@@ -1,12 +1,14 @@
 import {
   Controller,
   Get,
+  Post,
   Param,
   Query,
   UseGuards,
   ParseUUIDPipe,
   ParseIntPipe,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { BooksService, BookListItem, BookDetail } from './books.service';
 import { WordsService, WordWithSentences } from './words.service';
@@ -14,6 +16,7 @@ import { GuestAuthGuard } from '../../common/guards/guest-auth.guard';
 import { UnitAccessGuard } from './guards/unit-access.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { MemberType } from '../users/entities/user.entity';
+import { UserBook } from './entities/user-book.entity';
 
 interface BookQueryParams {
   isFree?: string;
@@ -53,6 +56,16 @@ export class BooksController {
   }
 
   /**
+   * GET /books/current
+   * Get user's current selected book
+   */
+  @Get('current')
+  @UseGuards(GuestAuthGuard)
+  async getCurrentBook(@CurrentUser() user: RequestUser): Promise<UserBook | null> {
+    return this.booksService.getCurrentBook(user.id);
+  }
+
+  /**
    * GET /books/:bookId
    * Get book details with unit information
    * Unit accessibility depends on user membership
@@ -65,6 +78,32 @@ export class BooksController {
   ): Promise<BookDetail> {
     const memberType = user?.memberType || MemberType.GUEST;
     return this.booksService.getBookDetail(bookId, memberType);
+  }
+
+  /**
+   * POST /books/:bookId/select
+   * Select a book as the current learning book
+   */
+  @Post(':bookId/select')
+  @UseGuards(GuestAuthGuard)
+  async selectBook(
+    @Param('bookId', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) bookId: string,
+    @CurrentUser() user: RequestUser,
+  ): Promise<{ message: string; userBook: UserBook }> {
+    // 验证词书存在
+    const book = await this.booksService.findById(bookId);
+    if (!book) {
+      throw new NotFoundException({
+        code: 'BOOK_NOT_FOUND',
+        message: '未找到该词书',
+      });
+    }
+
+    const userBook = await this.booksService.setCurrentBook(user.id, bookId);
+    return {
+      message: '词书选择成功',
+      userBook,
+    };
   }
 
   /**
@@ -88,3 +127,4 @@ export class BooksController {
     return this.wordsService.getWordsByUnit(bookId, unitNumber);
   }
 }
+
