@@ -7,6 +7,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { GuestMigrationService } from './guest-migration.service';
@@ -30,7 +31,10 @@ export class AuthController {
   async register(@Body() dto: RegisterDto) {
     // Validate that either email or phone is provided
     if (!dto.email && !dto.phone) {
-      throw new Error('Either email or phone must be provided');
+      throw new BadRequestException({
+        code: 'MISSING_CREDENTIALS',
+        message: '请提供邮箱或手机号',
+      });
     }
 
     return this.authService.register(dto);
@@ -44,7 +48,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() dto: LoginDto) {
     if (!dto.email && !dto.phone) {
-      throw new Error('Either email or phone must be provided');
+      throw new BadRequestException({
+        code: 'MISSING_CREDENTIALS',
+        message: '请提供邮箱或手机号',
+      });
     }
 
     return this.authService.login(dto);
