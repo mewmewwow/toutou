@@ -9,6 +9,7 @@ import {
   HttpStatus,
   BadRequestException,
 } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { GuestMigrationService } from './guest-migration.service';
 import { RegisterDto, LoginDto, ChangePasswordDto } from './dto';
@@ -16,6 +17,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GuestAuthGuard } from '../../common/guards/guest-auth.guard';
 
 @Controller('auth')
+@UseGuards(ThrottlerGuard)  // 防止暴力破解攻击
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
