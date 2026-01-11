@@ -40,3 +40,7 @@ coverage/
 # Database
 *.sqlite
 *.db
+
+# Vocabulary data files (large JSON files)
+CET4luan_1.json
+CET4luan_2.json

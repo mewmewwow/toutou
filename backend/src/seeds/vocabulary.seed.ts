@@ -766,12 +766,15 @@ export async function seedVocabulary(dataSource: DataSource): Promise<void> {
 
 // Run seed if called directly
 async function main(): Promise<void> {
-  // Import database config
-  const { getDatabaseConfig } = await import('../config/database.config');
-
   const dataSource = new DataSource({
-    ...getDatabaseConfig(),
+    type: 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432', 10),
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    database: process.env.DB_DATABASE || 'cishanjia_dev',
     entities: [Book, Word, Sentence],
+    synchronize: false,
   });
 
   try {
