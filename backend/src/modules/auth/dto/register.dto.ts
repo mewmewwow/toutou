@@ -20,6 +20,9 @@ export class RegisterDto {
   @IsString()
   @MinLength(8, { message: '密码长度至少8位' })
   @MaxLength(50)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/, {
+    message: '密码必须包含大写字母、小写字母和数字',
+  })
   password: string;
 
   @IsString()
