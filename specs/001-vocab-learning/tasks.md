@@ -221,23 +221,23 @@
 
 ### Backend Implementation for US4
 
-- [ ] T104 [US4] Implement ReviewModule in `backend/src/modules/review/review.module.ts`
-- [ ] T105 [US4] Implement ReviewService with FSRS integration in `backend/src/modules/review/review.service.ts`
-- [ ] T106 [US4] Implement review blocking logic (>25 overdue) in `backend/src/modules/review/review-blocking.service.ts`
-- [ ] T107 [US4] Implement ReviewController (GET /due, GET /cards, POST /cards/:id, GET /tracking) in `backend/src/modules/review/review.controller.ts`
-- [ ] T108 [US4] Implement memory tracking data aggregation in `backend/src/modules/review/tracking.service.ts`
-- [ ] T109 [US4] Add review blocking guard in `backend/src/modules/review/guards/review-blocking.guard.ts`
+- [x] T104 [US4] Implement ReviewModule in `backend/src/modules/review/review.module.ts`
+- [x] T105 [US4] Implement ReviewService with FSRS integration in `backend/src/modules/review/review.service.ts`
+- [x] T106 [US4] Implement review blocking logic (>25 overdue) in `backend/src/modules/review/review-blocking.service.ts`
+- [x] T107 [US4] Implement ReviewController (GET /due, GET /cards, POST /cards/:id, GET /tracking) in `backend/src/modules/review/review.controller.ts`
+- [x] T108 [US4] Implement memory tracking data aggregation in `backend/src/modules/review/tracking.service.ts`
+- [x] T109 [US4] Add review blocking guard in `backend/src/modules/review/guards/review-blocking.guard.ts`
 
 ### Frontend Implementation for US4
 
-- [ ] T110 [P] [US4] Create ReviewDashboardPage in `frontend/src/pages/review/ReviewDashboardPage.tsx`
-- [ ] T111 [P] [US4] Create WordCloudView component in `frontend/src/components/review/WordCloudView.tsx`
-- [ ] T112 [P] [US4] Create ReviewListView component in `frontend/src/components/review/ReviewListView.tsx`
-- [ ] T113 [P] [US4] Create CalendarView component in `frontend/src/components/review/CalendarView.tsx`
-- [ ] T114 [US4] Create WordHoverCard (definition, stats, retrievability) in `frontend/src/components/review/WordHoverCard.tsx`
-- [ ] T115 [US4] Create SmartReviewPage in `frontend/src/pages/review/SmartReviewPage.tsx`
-- [ ] T116 [US4] Create ReviewBlockingModal component in `frontend/src/components/review/ReviewBlockingModal.tsx`
-- [ ] T117 [US4] Implement review session navigation (module order) in `frontend/src/hooks/useReviewSession.ts`
+- [x] T110 [P] [US4] Create ReviewDashboardPage in `frontend/src/pages/review/ReviewDashboardPage.tsx`
+- [x] T111 [P] [US4] Create WordCloudView component in `frontend/src/components/review/WordCloudView.tsx`
+- [x] T112 [P] [US4] Create ReviewListView component in `frontend/src/components/review/ReviewListView.tsx`
+- [x] T113 [P] [US4] Create CalendarView component in `frontend/src/components/review/CalendarView.tsx`
+- [x] T114 [US4] Create WordHoverCard (definition, stats, retrievability) in `frontend/src/components/review/WordHoverCard.tsx`
+- [x] T115 [US4] Create SmartReviewPage in `frontend/src/pages/review/SmartReviewPage.tsx`
+- [x] T116 [US4] Create ReviewBlockingModal component in `frontend/src/components/review/ReviewBlockingModal.tsx`
+- [x] T117 [US4] Implement review session navigation (module order) in `frontend/src/hooks/useReviewSession.ts`
 
 **Checkpoint**: Review system functional with FSRS scheduling - independent test should pass
 
@@ -258,24 +258,24 @@
 
 ### Backend Implementation for US5
 
-- [ ] T122 [US5] Implement TestsModule in `backend/src/modules/tests/tests.module.ts`
-- [ ] T123 [US5] Implement TestsService in `backend/src/modules/tests/tests.service.ts`
-- [ ] T124 [US5] Implement test question generation (50 en→cn + 50 cn→en for Recognition) in `backend/src/modules/tests/question-generator.service.ts`
-- [ ] T125 [US5] Implement test timing validation (mode-specific) in `backend/src/modules/tests/timing.service.ts`
-- [ ] T126 [US5] Implement star awarding logic in `backend/src/modules/tests/star.service.ts`
-- [ ] T127 [US5] Implement TestsController (POST /start, POST /:id/submit) in `backend/src/modules/tests/tests.controller.ts`
-- [ ] T128 [US5] Add review blocking check before test start in `backend/src/modules/tests/guards/pre-test-review.guard.ts`
+- [x] T122 [US5] Implement TestsModule in `backend/src/modules/tests/tests.module.ts`
+- [x] T123 [US5] Implement TestsService in `backend/src/modules/tests/tests.service.ts`
+- [x] T124 [US5] Implement test question generation (50 en→cn + 50 cn→en for Recognition) in `backend/src/modules/tests/question-generator.service.ts`
+- [x] T125 [US5] Implement test timing validation (mode-specific) in `backend/src/modules/tests/timing.service.ts`
+- [x] T126 [US5] Implement star awarding logic in `backend/src/modules/tests/star.service.ts`
+- [x] T127 [US5] Implement TestsController (POST /start, POST /:id/submit) in `backend/src/modules/tests/tests.controller.ts`
+- [x] T128 [US5] Add review blocking check before test start in `backend/src/modules/tests/guards/pre-test-review.guard.ts`
 
 ### Frontend Implementation for US5
 
 - [ ] T129 [P] [US5] Create TestModePage in `frontend/src/pages/test/TestModePage.tsx`
-- [ ] T130 [P] [US5] Create TestQuestionGrid component in `frontend/src/components/test/TestQuestionGrid.tsx`
-- [ ] T131 [P] [US5] Create TestTimer component in `frontend/src/components/test/TestTimer.tsx`
+- [x] T130 [P] [US5] Create TestQuestionGrid component in `frontend/src/components/test/TestQuestionGrid.tsx`
+- [x] T131 [P] [US5] Create TestTimer component in `frontend/src/components/test/TestTimer.tsx`
 - [ ] T132 [US5] Create NormalModeTest page in `frontend/src/pages/test/NormalModeTest.tsx`
 - [ ] T133 [US5] Create SpeedChallengeTest page in `frontend/src/pages/test/SpeedChallengeTest.tsx`
 - [ ] T134 [US5] Create UltimateChallengeTest page in `frontend/src/pages/test/UltimateChallengeTest.tsx`
 - [ ] T135 [US5] Create TestResultsPage with star display in `frontend/src/pages/test/TestResultsPage.tsx`
-- [ ] T136 [US5] Create StarDisplay component in `frontend/src/components/test/StarDisplay.tsx`
+- [x] T136 [US5] Create StarDisplay component in `frontend/src/components/test/StarDisplay.tsx`
 
 **Checkpoint**: Testing system functional with all modes - independent test should pass
 
@@ -296,33 +296,33 @@
 
 ### Backend Implementation for US6
 
-- [ ] T141 [US6] Implement AuthModule in `backend/src/modules/auth/auth.module.ts`
-- [ ] T142 [US6] Implement LocalStrategy (email/password) in `backend/src/modules/auth/strategies/local.strategy.ts`
-- [ ] T143 [US6] Implement JwtStrategy in `backend/src/modules/auth/strategies/jwt.strategy.ts`
+- [x] T141 [US6] Implement AuthModule in `backend/src/modules/auth/auth.module.ts`
+- [x] T142 [US6] Implement LocalStrategy (email/password) in `backend/src/modules/auth/strategies/local.strategy.ts`
+- [x] T143 [US6] Implement JwtStrategy in `backend/src/modules/auth/strategies/jwt.strategy.ts`
 - [ ] T144 [US6] Implement SmsStrategy with Tencent Cloud in `backend/src/modules/auth/strategies/sms.strategy.ts`
 - [ ] T145 [US6] Implement GoogleStrategy in `backend/src/modules/auth/strategies/google.strategy.ts`
 - [ ] T146 [US6] Implement WechatStrategy in `backend/src/modules/auth/strategies/wechat.strategy.ts`
-- [ ] T147 [US6] Implement AuthService in `backend/src/modules/auth/auth.service.ts`
-- [ ] T148 [US6] Implement guest data migration service in `backend/src/modules/auth/guest-migration.service.ts`
-- [ ] T149 [US6] Implement trial period management (14 days) in `backend/src/modules/users/membership.service.ts`
-- [ ] T150 [US6] Implement device limit enforcement (max 3) in `backend/src/modules/devices/device-limit.service.ts`
-- [ ] T151 [US6] Implement AuthController in `backend/src/modules/auth/auth.controller.ts`
-- [ ] T152 [US6] Implement UsersModule in `backend/src/modules/users/users.module.ts`
-- [ ] T153 [US6] Implement UsersService in `backend/src/modules/users/users.service.ts`
-- [ ] T154 [US6] Implement UsersController (GET /me, PATCH /me, GET /me/devices) in `backend/src/modules/users/users.controller.ts`
+- [x] T147 [US6] Implement AuthService in `backend/src/modules/auth/auth.service.ts`
+- [x] T148 [US6] Implement guest data migration service in `backend/src/modules/auth/guest-migration.service.ts`
+- [x] T149 [US6] Implement trial period management (14 days) in `backend/src/modules/users/membership.service.ts`
+- [x] T150 [US6] Implement device limit enforcement (max 3) in `backend/src/modules/devices/device-limit.service.ts`
+- [x] T151 [US6] Implement AuthController in `backend/src/modules/auth/auth.controller.ts`
+- [x] T152 [US6] Implement UsersModule in `backend/src/modules/users/users.module.ts`
+- [x] T153 [US6] Implement UsersService in `backend/src/modules/users/users.service.ts`
+- [x] T154 [US6] Implement UsersController (GET /me, PATCH /me, GET /me/devices) in `backend/src/modules/users/users.controller.ts`
 
 ### Frontend Implementation for US6
 
-- [ ] T155 [P] [US6] Create auth Zustand store in `frontend/src/stores/authStore.ts`
-- [ ] T156 [P] [US6] Create LoginPage in `frontend/src/pages/auth/LoginPage.tsx`
-- [ ] T157 [P] [US6] Create RegisterPage in `frontend/src/pages/auth/RegisterPage.tsx`
+- [x] T155 [P] [US6] Create auth Zustand store in `frontend/src/stores/authStore.ts`
+- [x] T156 [P] [US6] Create LoginPage in `frontend/src/pages/auth/LoginPage.tsx`
+- [x] T157 [P] [US6] Create RegisterPage in `frontend/src/pages/auth/RegisterPage.tsx`
 - [ ] T158 [US6] Create EmailRegisterForm component in `frontend/src/components/auth/EmailRegisterForm.tsx`
 - [ ] T159 [US6] Create PhoneRegisterForm component with SMS in `frontend/src/components/auth/PhoneRegisterForm.tsx`
 - [ ] T160 [US6] Create OAuthButtons component (Google, WeChat) in `frontend/src/components/auth/OAuthButtons.tsx`
 - [ ] T161 [US6] Create TrialCountdown component (VIP试用剩余X天) in `frontend/src/components/ui/TrialCountdown.tsx`
 - [ ] T162 [US6] Create ProfilePage in `frontend/src/pages/profile/ProfilePage.tsx`
 - [ ] T163 [US6] Create DeviceManagementPage in `frontend/src/pages/profile/DeviceManagementPage.tsx`
-- [ ] T164 [US6] Implement protected route guard in `frontend/src/router.tsx`
+- [x] T164 [US6] Implement protected route guard in `frontend/src/router.tsx`
 
 **Checkpoint**: Registration and membership functional - independent test should pass
 
@@ -343,23 +343,23 @@
 
 ### Backend Implementation for US7
 
-- [ ] T169 [US7] Implement RewardsModule in `backend/src/modules/rewards/rewards.module.ts`
-- [ ] T170 [US7] Implement CoinService with daily cap enforcement in `backend/src/modules/rewards/coin.service.ts`
-- [ ] T171 [US7] Implement MedalService (7 tiers) in `backend/src/modules/rewards/medal.service.ts`
-- [ ] T172 [US7] Implement CertificateService in `backend/src/modules/rewards/certificate.service.ts`
-- [ ] T173 [US7] Implement LoginStreakService in `backend/src/modules/rewards/login-streak.service.ts`
-- [ ] T174 [US7] Implement RewardsController in `backend/src/modules/rewards/rewards.controller.ts`
+- [x] T169 [US7] Implement RewardsModule in `backend/src/modules/rewards/rewards.module.ts`
+- [x] T170 [US7] Implement CoinService with daily cap enforcement in `backend/src/modules/rewards/coin.service.ts`
+- [x] T171 [US7] Implement MedalService (7 tiers) in `backend/src/modules/rewards/medal.service.ts`
+- [x] T172 [US7] Implement CertificateService in `backend/src/modules/rewards/certificate.service.ts`
+- [x] T173 [US7] Implement LoginStreakService in `backend/src/modules/rewards/streak.service.ts`
+- [x] T174 [US7] Implement RewardsController in `backend/src/modules/rewards/rewards.controller.ts`
 - [ ] T175 [US7] Add coin awarding hooks to learning/test completion in `backend/src/modules/learning/learning.service.ts`
 
 ### Frontend Implementation for US7
 
-- [ ] T176 [P] [US7] Create CoinBalance component in `frontend/src/components/rewards/CoinBalance.tsx`
-- [ ] T177 [P] [US7] Create CoinHistoryPage in `frontend/src/pages/rewards/CoinHistoryPage.tsx`
-- [ ] T178 [P] [US7] Create MedalProgress component in `frontend/src/components/rewards/MedalProgress.tsx`
-- [ ] T179 [US7] Create WeeklyMedalPage in `frontend/src/pages/rewards/WeeklyMedalPage.tsx`
-- [ ] T180 [US7] Create CertificatesPage in `frontend/src/pages/rewards/CertificatesPage.tsx`
-- [ ] T181 [US7] Create LoginStreakCalendar component in `frontend/src/components/rewards/LoginStreakCalendar.tsx`
-- [ ] T182 [US7] Create MilestoneClaimButton component in `frontend/src/components/rewards/MilestoneClaimButton.tsx`
+- [x] T176 [P] [US7] Create CoinBalance component in `frontend/src/components/rewards/CoinBalance.tsx`
+- [x] T177 [P] [US7] Create CoinHistoryPage in `frontend/src/components/rewards/CoinTransactionHistory.tsx`
+- [x] T178 [P] [US7] Create MedalProgress component in `frontend/src/components/rewards/MedalDisplay.tsx`
+- [x] T179 [US7] Create WeeklyMedalPage in `frontend/src/components/rewards/MedalTierList.tsx`
+- [x] T180 [US7] Create CertificatesPage in `frontend/src/components/rewards/CertificateGallery.tsx`
+- [x] T181 [US7] Create LoginStreakCalendar component in `frontend/src/components/rewards/StreakTracker.tsx`
+- [x] T182 [US7] Create RewardsDashboard component in `frontend/src/components/rewards/RewardsDashboard.tsx`
 
 **Checkpoint**: Rewards system functional - independent test should pass
 
@@ -384,8 +384,8 @@
 
 ### Data Management
 
-- [ ] T190 Create guest data cleanup job (30-day retention) in `backend/src/jobs/guest-cleanup.job.ts`
-- [ ] T191 Create trial expiration job in `backend/src/jobs/trial-expiration.job.ts`
+- [x] T190 Create guest data cleanup job (30-day retention) in `backend/src/jobs/guest-cleanup.job.ts`
+- [x] T191 Create trial expiration job in `backend/src/jobs/trial-expiration.job.ts`
 
 ### Final Validation
 
@@ -429,18 +429,21 @@
 ### Parallel Opportunities
 
 **Phase 2 (Foundational)**:
+
 ```
 T013-T022: All entity definitions can run in parallel
 T025-T029: All infrastructure tasks can run in parallel
 ```
 
 **Phase 3 (US1)**:
+
 ```
 T040-T043: All tests can run in parallel
 T055-T056: Frontend stores/hooks can run in parallel
 ```
 
 **Phase 4 (US2)**:
+
 ```
 T064-T067: All tests can run in parallel
 T075-T078: All UI components can run in parallel
