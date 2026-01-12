@@ -5,10 +5,14 @@ import { RegistrationPrompt } from '../../components/ui/RegistrationPrompt';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 
+import { Header } from '../../components/layout/Header';
+import { useAuthStore } from '../../stores/authStore';
+
 export function BookDetailPage() {
   const { bookId } = useParams<{ bookId: string }>();
   const navigate = useNavigate();
   const { data: book, isLoading, error } = useBookDetail(bookId);
+  const { isAuthenticated } = useAuthStore();
 
   const handleSelectUnit = (unitNumber: number, moduleType: number = 1) => {
     // 根据模块类型映射到对应的路由
@@ -63,32 +67,7 @@ export function BookDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleBack}
-              className="p-2 rounded-lg hover:bg-gray-100"
-            >
-              <svg
-                className="w-5 h-5 text-gray-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <h1 className="text-lg font-semibold text-gray-900">{book.name}</h1>
-          </div>
-        </div>
-      </header>
+      <Header showBack onBack={handleBack} title={book.name} />
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6">
@@ -135,8 +114,8 @@ export function BookDetailPage() {
           </div>
         </Card>
 
-        {/* Locked Units Notice */}
-        {lockedUnits > 0 && (
+        {/* Locked Units Notice - Only show if not authenticated and units are locked */}
+        {!isAuthenticated && lockedUnits > 0 && (
           <div className="mb-6">
             <RegistrationPrompt
               variant="banner"

@@ -5,10 +5,14 @@ import { BookCard } from '../../components/ui/BookCard';
 import { RegistrationPrompt } from '../../components/ui/RegistrationPrompt';
 import { useGuestStore } from '../../stores/guestStore';
 
+import { Header } from '../../components/layout/Header';
+import { useAuthStore } from '../../stores/authStore';
+
 export function HomePage() {
   const navigate = useNavigate();
   const { data: books, isLoading, error } = useBooks();
   const { fingerprint, initializeFingerprint } = useGuestStore();
+  const { user, isAuthenticated } = useAuthStore();
 
   // Initialize fingerprint on mount
   useEffect(() => {
@@ -55,41 +59,22 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-900">词善佳</h1>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleLogin}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
-              >
-                登录
-              </button>
-              <button
-                onClick={handleRegister}
-                className="px-4 py-2 text-sm bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-              >
-                注册
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Guest Banner */}
-        <div className="mb-8">
-          <RegistrationPrompt
-            variant="banner"
-            title="访客模式"
-            message="您正在以访客身份浏览，可以免费试学第一单元"
-            onRegister={handleRegister}
-            onLogin={handleLogin}
-          />
-        </div>
+        {/* Guest Banner - Only show if not authenticated */}
+        {!isAuthenticated && (
+          <div className="mb-8">
+            <RegistrationPrompt
+              variant="banner"
+              title="访客模式"
+              message="您正在以访客身份浏览，可以免费试学第一单元"
+              onRegister={handleRegister}
+              onLogin={handleLogin}
+            />
+          </div>
+        )}
 
         {/* Hero Section */}
         <section className="text-center mb-12">
