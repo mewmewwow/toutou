@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 
 interface KeyboardHandlers {
   onNext?: () => void;           // Enter - next word
@@ -195,5 +195,3 @@ export const RatingButtons: React.FC<RatingButtonsProps> = ({
   );
 };
 
-// Re-export for convenience
-import React from 'react';

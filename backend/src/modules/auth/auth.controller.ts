@@ -10,11 +10,21 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
 import { GuestMigrationService } from './guest-migration.service';
 import { RegisterDto, LoginDto, ChangePasswordDto } from './dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GuestAuthGuard } from '../../common/guards/guest-auth.guard';
+
+// 定义经过 JWT 认证后的请求类型
+interface AuthenticatedRequest extends ExpressRequest {
+  user: {
+    id: string;
+    isGuest?: boolean;
+    [key: string]: unknown;
+  };
+}
 
 @Controller('auth')
 @UseGuards(ThrottlerGuard)  // 防止暴力破解攻击
@@ -76,7 +86,7 @@ export class AuthController {
   @Post('change-password')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async changePassword(@Request() req, @Body() dto: ChangePasswordDto) {
+  async changePassword(@Request() req: AuthenticatedRequest, @Body() dto: ChangePasswordDto) {
     await this.authService.changePassword(
       req.user.id,
       dto.oldPassword,
@@ -105,7 +115,7 @@ export class AuthController {
   @Post('guest/migrate')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async migrateGuest(@Request() req, @Body('guestUserId') guestUserId: string) {
+  async migrateGuest(@Request() req: AuthenticatedRequest, @Body('guestUserId') guestUserId: string) {
     const result = await this.guestMigrationService.migrateGuestData(
       guestUserId,
       req.user.id,
@@ -122,7 +132,7 @@ export class AuthController {
    */
   @Get('guest/preview')
   @UseGuards(GuestAuthGuard)
-  async previewGuestData(@Request() req) {
+  async previewGuestData(@Request() req: AuthenticatedRequest) {
     const summary = await this.guestMigrationService.getGuestDataSummary(
       req.user.id,
     );
@@ -141,7 +151,7 @@ export class AuthController {
    */
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getCurrentUser(@Request() req) {
+  getCurrentUser(@Request() req: AuthenticatedRequest) {
     return req.user;
   }
 }

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useReviewSession } from '../../hooks/useReviewSession';
 import { AudioButton } from '../../components/learning/AudioButton';
-import { BatchProgress } from '../../components/learning/BatchProgress';
+import { MiniProgress } from '../../components/learning/BatchProgress';
 
 /**
  * Smart review session page - handles card review flow
@@ -167,6 +167,11 @@ export function SmartReviewPage() {
     );
   }
 
+  // Ensure currentCard exists before rendering
+  if (!currentCard) {
+    return null; // Should not happen given the checks above
+  }
+
   // Review session in progress
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -191,7 +196,7 @@ export function SmartReviewPage() {
       </header>
 
       {/* Progress bar */}
-      <BatchProgress current={currentIndex + 1} total={totalCards} />
+      <MiniProgress current={currentIndex + 1} total={totalCards} className="px-4" />
 
       {/* Card content */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">

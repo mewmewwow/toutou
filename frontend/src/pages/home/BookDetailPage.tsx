@@ -11,7 +11,15 @@ export function BookDetailPage() {
   const { data: book, isLoading, error } = useBookDetail(bookId);
 
   const handleSelectUnit = (unitNumber: number, moduleType: number = 1) => {
-    navigate(`/learn/${bookId}/${unitNumber}/${moduleType}`);
+    // 根据模块类型映射到对应的路由
+    // 1: 认读, 2: 听读, 3: 拼写
+    const moduleRoutes: Record<number, string> = {
+      1: 'recognition',
+      2: 'dictation',
+      3: 'writing',
+    };
+    const modulePath = moduleRoutes[moduleType] || 'recognition';
+    navigate(`/learn/${modulePath}/${bookId}?unit=${unitNumber}`);
   };
 
   const handleRegister = () => {

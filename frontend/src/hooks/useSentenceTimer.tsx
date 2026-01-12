@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 interface UseSentenceTimerOptions {
   sentence: string;
@@ -167,5 +167,3 @@ export const SentenceTimerDisplay: React.FC<SentenceTimerDisplayProps> = ({
   );
 };
 
-// React import for component
-import React from 'react';

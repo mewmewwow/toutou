@@ -8,15 +8,15 @@ import { setDeviceFingerprint, getDeviceFingerprint } from '../../services/api';
 const FINGERPRINT_STORAGE_KEY = 'deviceFingerprint';
 
 /**
- * Simple hash function (FNV-1a)
+ * SHA-256 hash function using Web Crypto API
+ * Returns a 64-character hexadecimal string
  */
-function fnv1aHash(str: string): string {
-  let hash = 2166136261;
-  for (let i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = (hash * 16777619) >>> 0;
-  }
-  return hash.toString(16).padStart(8, '0');
+async function sha256Hash(str: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -176,7 +176,7 @@ export async function generateFingerprint(): Promise<string> {
   // Generate new fingerprint
   const signals = await collectFingerprints();
   const combined = signals.join('|||');
-  const fingerprint = fnv1aHash(combined) + fnv1aHash(combined.split('').reverse().join(''));
+  const fingerprint = await sha256Hash(combined);
 
   // Store and return
   setDeviceFingerprint(fingerprint);
