@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { HomePage } from './pages/home/HomePage';
 import { BookDetailPage } from './pages/home/BookDetailPage';
+import { UnitSelectPage } from './pages/learn/UnitSelectPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { LoginPage } from './pages/auth/LoginPage';
 
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: '/books/:bookId',
     element: <BookDetailPage />,
+  },
+  {
+    path: '/books/:bookId/modules/:moduleType',
+    element: <UnitSelectPage />,
   },
   // Learning module routes
   {

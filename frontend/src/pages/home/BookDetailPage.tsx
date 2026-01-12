@@ -1,12 +1,20 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useBookDetail } from '../../hooks/useBooks';
-import { UnitLock } from '../../components/ui/UnitLock';
 import { RegistrationPrompt } from '../../components/ui/RegistrationPrompt';
-import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-
 import { Header } from '../../components/layout/Header';
 import { useAuthStore } from '../../stores/authStore';
+
+// 学习模块定义
+const LEARNING_MODULES = [
+  { id: 'recognition', name: '智能认读', icon: '👁', description: '看单词选释义' },
+  { id: 'dictation', name: '智能听读', icon: '👂', description: '听发音选单词' },
+  { id: 'writing', name: '智能拼写', icon: '⌨️', description: '根据释义拼写单词' },
+  { id: 'word-usage', name: '智能用法', icon: '📝', description: '学习单词用法例句' },
+  { id: 'sentence-listening', name: '句子听力', icon: '🎧', description: '听句子理解含义' },
+  { id: 'sentence-translation', name: '句子翻译', icon: '🌐', description: '翻译英文句子' },
+  { id: 'sentence-dictation', name: '句子听写', icon: '✍️', description: '听写完整句子' },
+];
 
 export function BookDetailPage() {
   const { bookId } = useParams<{ bookId: string }>();
@@ -14,16 +22,8 @@ export function BookDetailPage() {
   const { data: book, isLoading, error } = useBookDetail(bookId);
   const { isAuthenticated } = useAuthStore();
 
-  const handleSelectUnit = (unitNumber: number, moduleType: number = 1) => {
-    // 根据模块类型映射到对应的路由
-    // 1: 认读, 2: 听读, 3: 拼写
-    const moduleRoutes: Record<number, string> = {
-      1: 'recognition',
-      2: 'dictation',
-      3: 'writing',
-    };
-    const modulePath = moduleRoutes[moduleType] || 'recognition';
-    navigate(`/learn/${modulePath}/${bookId}?unit=${unitNumber}`);
+  const handleSelectModule = (moduleId: string) => {
+    navigate(`/books/${bookId}/modules/${moduleId}`);
   };
 
   const handleRegister = () => {
@@ -60,10 +60,6 @@ export function BookDetailPage() {
       </div>
     );
   }
-
-  // Count accessible units
-  const accessibleUnits = book.units.filter((u) => u.isAccessible).length;
-  const lockedUnits = book.units.length - accessibleUnits;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -114,87 +110,56 @@ export function BookDetailPage() {
           </div>
         </Card>
 
-        {/* Locked Units Notice - Only show if not authenticated and units are locked */}
-        {!isAuthenticated && lockedUnits > 0 && (
+        {/* Guest Banner */}
+        {!isAuthenticated && (
           <div className="mb-6">
             <RegistrationPrompt
               variant="banner"
-              title={`还有 ${lockedUnits} 个单元被锁定`}
-              message="注册解锁全部单元，免费试用14天"
+              title="访客模式"
+              message="注册后可解锁全部单元和学习模式"
               onRegister={handleRegister}
               onLogin={handleLogin}
             />
           </div>
         )}
 
-        {/* Unit List */}
+        {/* Learning Modules Selection */}
         <section>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            选择单元
+            选择学习模式
           </h3>
 
-          <div className="space-y-3">
-            {book.units.map((unit) => (
-              <UnitLock
-                key={unit.number}
-                unitNumber={unit.number}
-                wordCount={unit.wordCount}
-                isAccessible={unit.isAccessible}
-                onSelect={() => handleSelectUnit(unit.number)}
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {LEARNING_MODULES.map((module) => (
+              <Card
+                key={module.id}
+                className="cursor-pointer hover:shadow-md transition-shadow hover:border-primary-300 border-2 border-transparent"
+                onClick={() => handleSelectModule(module.id)}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="text-3xl">{module.icon}</div>
+                  <div className="flex-1">
+                    <div className="font-semibold text-gray-900">{module.name}</div>
+                    <div className="text-sm text-gray-500">{module.description}</div>
+                  </div>
+                  <svg
+                    className="w-5 h-5 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </Card>
             ))}
           </div>
-
-          {book.units.length === 0 && (
-            <Card className="text-center py-12 text-gray-500">
-              暂无单元
-            </Card>
-          )}
         </section>
-
-        {/* Learning Modules Info */}
-        <section className="mt-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            学习模式
-          </h3>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Card padding="sm" className="text-center">
-              <div className="text-2xl mb-1">👁</div>
-              <div className="text-sm font-medium">认读</div>
-            </Card>
-            <Card padding="sm" className="text-center">
-              <div className="text-2xl mb-1">👂</div>
-              <div className="text-sm font-medium">听读</div>
-            </Card>
-            <Card padding="sm" className="text-center">
-              <div className="text-2xl mb-1">⌨️</div>
-              <div className="text-sm font-medium">拼写</div>
-            </Card>
-            <Card padding="sm" className="text-center opacity-50">
-              <div className="text-2xl mb-1">🔒</div>
-              <div className="text-sm font-medium text-gray-400">更多模式</div>
-            </Card>
-          </div>
-        </section>
-
-        {/* Call to Action */}
-        {lockedUnits > 0 && (
-          <section className="mt-8">
-            <RegistrationPrompt
-              title="解锁完整学习体验"
-              message="注册成为会员，享受7种学习模式和全部词书内容"
-              benefits={[
-                '解锁所有单元和词书',
-                '7种学习模式自由选择',
-                '详细学习数据统计',
-                '永久保存学习进度',
-              ]}
-              onRegister={handleRegister}
-              onLogin={handleLogin}
-            />
-          </section>
-        )}
       </main>
     </div>
   );
