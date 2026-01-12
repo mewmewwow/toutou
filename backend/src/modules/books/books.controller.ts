@@ -69,14 +69,16 @@ export class BooksController {
    * GET /books/:bookId
    * Get book details with unit information
    * Unit accessibility depends on user membership
-   * This endpoint is publicly accessible, memberType defaults to GUEST
    */
   @Get(':bookId')
+  @UseGuards(GuestAuthGuard)
   async getBookDetail(
     @Param('bookId', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) bookId: string,
+    @CurrentUser() user: RequestUser,
   ): Promise<BookDetail> {
-    // 公开访问时，默认以游客身份查看
-    return this.booksService.getBookDetail(bookId, MemberType.GUEST);
+    // 从用户获取真实的 memberType，访客默认为 GUEST
+    const memberType = user?.memberType || MemberType.GUEST;
+    return this.booksService.getBookDetail(bookId, memberType);
   }
 
   /**
