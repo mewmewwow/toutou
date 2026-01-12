@@ -2,6 +2,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { HomePage } from './pages/home/HomePage';
 import { BookDetailPage } from './pages/home/BookDetailPage';
+import { RegisterPage } from './pages/auth/RegisterPage';
+import { LoginPage } from './pages/auth/LoginPage';
 
 // Lazy load learning modules for better performance
 // Word-based modules (1-3)
@@ -124,39 +126,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/register',
-    element: (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            注册
-          </h1>
-          <p className="text-gray-600 mb-4">
-            注册功能即将上线
-          </p>
-          <a href="/" className="text-primary-500 hover:underline">
-            返回首页
-          </a>
-        </div>
-      </div>
-    ),
+    element: <RegisterPage />,
   },
   {
     path: '/login',
-    element: (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            登录
-          </h1>
-          <p className="text-gray-600 mb-4">
-            登录功能即将上线
-          </p>
-          <a href="/" className="text-primary-500 hover:underline">
-            返回首页
-          </a>
-        </div>
-      </div>
-    ),
+    element: <LoginPage />,
   },
   // 404 fallback
   {

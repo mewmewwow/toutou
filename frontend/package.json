@@ -22,13 +22,14 @@
     "date-fns": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.71.0",
     "react-router-dom": "^6.20.0",
     "workbox-core": "^7.4.0",
     "workbox-expiration": "^7.4.0",
     "workbox-precaching": "^7.4.0",
     "workbox-routing": "^7.4.0",
     "workbox-strategies": "^7.4.0",
-    "zustand": "^4.4.0"
+    "zustand": "^4.5.7"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",
