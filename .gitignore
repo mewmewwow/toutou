@@ -44,3 +44,6 @@ coverage/
 # Vocabulary data files (large JSON files)
 CET4luan_1.json
 CET4luan_2.json
+
+# AI dialog export docs (不提交到 GitHub)
+AI_dialog_export_docs/
